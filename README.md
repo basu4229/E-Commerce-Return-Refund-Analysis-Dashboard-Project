@@ -1,57 +1,190 @@
-📦 E-Commerce Return & Refund Analysis — Power BI
+📊 E-Commerce Return & Refund Analysis — Power BI
 📌 Project Overview
 
-Returns and refunds can have a major impact on e-commerce profitability. A high return rate doesn't only mean lost sales — it can also increase reverse-logistics costs, inventory issues, refund exposure, and customer dissatisfaction.
+Returns are a normal part of e-commerce, but when return volume starts increasing, it can quickly affect revenue, inventory, logistics, and customer experience.
 
-This Power BI project analyzes e-commerce orders, returns, refund amounts, return reasons, product categories, sales channels, discounts, and return duration to understand where returns are happening and what factors may be contributing to them.
+I built this Power BI project to look beyond the number of returned orders and understand what is driving returns, where the refund exposure is coming from, and which areas deserve business attention first.
 
-The dashboard is designed to help business teams quickly identify high-return categories, problematic products, major return reasons, and potential relationships between discounts and return rates.
+The report uses an order-line dataset and follows a beginner-friendly star schema, allowing the analysis to cover everything from overall return performance to individual product-level return behavior.
+
+The main objective was simple:
+
+Turn return and refund data into insights that can support practical business decisions.
 
 🎯 Business Problem
 
-The business wanted to answer questions such as:
+The business needs to understand the scale and causes of product returns.
 
-How many orders are being returned?
-What is the overall return rate?
-How much money is being refunded?
-Which product categories generate the most returns?
-Which return reasons contribute most to returned units?
-Which sales channels have higher return volumes?
-Are heavily discounted products more likely to be returned?
-Which products require closer investigation?
-How long does it typically take for customers to return products?
-Where should the business focus its return-reduction efforts?
-📊 Dashboard Pages
-1. Executive Summary
+Instead of creating KPIs just for reporting purposes, each KPI in this dashboard is connected to a specific decision question.
 
-The executive page provides a high-level view of return and refund performance.
+KPI	Business Question	Decision Lens
+Total Orders	How large is the order base?	Business Volume
+Returned Orders	How many orders came back?	Return Exposure
+Return Rate %	What share of orders were returned?	Operational Risk
+Refund Amount	How much money was refunded?	Financial Leakage
+Average Return Days	How quickly are products returned after delivery?	Customer Behavior
+Products Returned	How many products were affected?	Product Spread
+Top Return Category	Which category creates the most returned units?	Priority Area
+Top Return Reason	What is the biggest reason behind returns?	Action Trigger
 
-Key KPIs include:
+This approach keeps the dashboard focused on decisions rather than just visualizations.
 
-Total Orders
-Return Orders
-Return Rate %
+🗂️ Dataset & Data Model
+
+The project starts with a raw order-line table where:
+
+One row represents one product line inside an order.
+
+Fact Table
+
+Fact_Orders
+
+The fact table contains information such as:
+
+Order ID
+Order Date
+Delivery Date
+Customer ID
+Product ID
+Quantity
+Unit Price
+Discount %
+Return Flag
+Return Quantity
+Sales Channel
+Payment Method
+Return Reason
+Dimension Tables
+
+The model contains separate dimensions for:
+
+Date
+Products
+Customers
+Sales Channel
+Payment Method
+Return Reason
+
+This creates a clean and manageable star-schema model for analysis.
+
+Derived Calculations
+
+Several business metrics were created inside Power BI using DAX, including:
+
 Refund Amount
-Returned Units
-Refund Amount Trend
-Returns by Sales Channel
+Return Days
+Return Rate %
+Month-over-Month calculations
+Return Reason Ranking
+Cumulative Return %
+Pareto analysis
+Dynamic Top Category
+Dynamic Top Return Reason
+Product Risk indicators
+📄 Dashboard Structure
+1️⃣ Executive Summary
+
+The first page provides a high-level view of the overall return and refund situation.
+
+Key KPIs
+Total Orders: 3,100
+Returned Orders: 745
+Return Rate: 24.03%
+Refund Amount: 3.82M
+
+The KPI cards also include MoM indicators, making it easier to understand whether performance is improving or moving in the wrong direction.
+
+Monthly Return Trend
+
+The trend visual combines returned orders and return rate over time.
+
+This helps identify:
+
+Monthly spikes
+Changes in return behavior
+Potential seasonality
+Periods requiring further investigation
 Returns by Category
-Return Reason Pareto Analysis
 
-This page is intended for management to understand the overall return situation without going through individual products.
+This visual shows which product categories contribute the most returned units.
 
-2. Product Diagnostics
+Rather than simply asking "How many returns do we have?", the analysis asks:
 
-The second page goes deeper into product-level return behavior.
+"Which categories are creating the biggest return problem?"
 
-It includes:
+Return Reason Pareto
 
-Top Return Category
-Top Return Reason
-Average Return Days
-Discount vs Return Rate analysis
-Return reason heatmap by subcategory
-Product-level return performance table
+The Pareto analysis ranks return reasons by returned units and adds a cumulative percentage.
+
+This helps identify the vital few reasons responsible for a large portion of returns, allowing the business to prioritize corrective action.
+
+Returns by Sales Channel
+
+Returned units are also analyzed across:
+
+Website
+Mobile App
+Marketplace
+Offline Store
+
+This helps identify where return volume is concentrated and whether certain channels require additional investigation.
+
+Filters
+
+The Executive Summary can be explored using:
+
+Date Range
+Category
+Sales Channel
+Reset Filters
+2️⃣ Product Diagnostics
+
+The second page moves from "What is happening?" to "Why is it happening?"
+
+This page focuses on root-cause and product-level analysis.
+
+Key Diagnostic KPIs
+Average Return Days: 14.9 days
+Products Returned: 104 unique products
+Top Category: Fashion
+Top Reason: Product Not As Expected
+Return Reason Heatmap
+
+A subcategory-by-return-reason heatmap highlights where specific problems are concentrated.
+
+For example, the business can quickly identify whether issues such as:
+
+Wrong Size
+Damaged Product
+Defective Product
+Late Delivery
+Product Not As Expected
+Quality Issue
+Wrong Item
+Changed Mind
+
+are concentrated within particular subcategories.
+
+This is much more useful than looking at the overall return rate alone.
+
+Discount vs Return Risk
+
+The scatter plot compares:
+
+Average Discount % vs Return Rate %
+
+The purpose isn't to claim that discounts automatically cause returns.
+
+Instead, it helps identify products where high discount levels and high return rates appear together, creating a potential risk area for further investigation.
+
+Low-volume products are excluded from the risk analysis so that products with very little activity don't create misleading conclusions.
+
+Product Return Details
+
+The detailed product table provides:
+
+Product
+Subcategory
 Total Orders
 Returned Units
 Return Rate %
@@ -59,139 +192,199 @@ Refund Amount
 Average Return Days
 Average Discount %
 
-This page helps identify products and subcategories that may require operational or product-level action.
+This gives the business a way to move from an overall dashboard view into specific products that may require attention.
+
+📐 Analytical Techniques Used
+
+This project focuses heavily on the analytical layer rather than simply creating attractive visuals.
+
+🔹 MoM Analysis
+
+Previous-month calculations are used to show movement in KPI performance.
+
+Directional arrows are displayed below KPI cards to make the change easier to interpret.
+
+🔹 Pareto Analysis
+
+Return reasons are ranked and converted into cumulative percentages to identify the few causes responsible for the largest share of returned units.
+
+🔹 Heatmap Analysis
+
+A subcategory × return-reason matrix uses conditional formatting to highlight high-intensity problem areas.
+
+🔹 Product Risk Analysis
+
+Product return rates are compared against a benchmark to identify potential high-risk products.
+
+🔹 Dynamic KPIs
+
+TOPN-based DAX measures dynamically identify:
+
+Top Return Category
+Top Return Reason
+
+These values respond to the selected filters.
+
+🔹 Volume Filtering
+
+Low-volume products are removed from risk-focused visuals to reduce the chance of drawing conclusions from insufficient data.
 
 🔎 Key Findings
 
-Based on the dashboard:
+The dashboard highlights several areas worth investigating.
 
-1. Return rate is significant
+1. Returns represent a significant operational issue
 
-The dashboard shows 3,100 total orders and 745 return orders, resulting in a 24.03% return rate.
+With 3,100 orders and 745 returned orders, the return rate stands at 24.03%.
 
-That means roughly 1 out of every 4 orders is being returned, making returns an important business area to investigate.
+That means returns represent a substantial portion of the order base and should be treated as a business-performance issue rather than only a customer-service metric.
 
-2. Refund exposure is substantial
+2. Refunds create meaningful financial exposure
 
-The total refund amount shown is approximately 3.82M, indicating that returns are not only an operational issue but also have a direct financial impact.
+The dashboard reports approximately 3.82M in refund amount.
 
-3. Fashion is the leading return category
+This makes it important to prioritize return causes not only by volume but also by their financial impact.
 
-Fashion appears as the top return category, with the highest returned-unit volume among the categories displayed.
+3. Fashion is the primary return category
 
-This makes fashion a natural starting point for investigating issues such as sizing, product expectations, quality, and product descriptions.
+Fashion is currently the top return category by returned units.
 
-4. Product expectations are a major return driver
+This makes it a logical starting point for investigating issues such as sizing, product expectations, quality and product information.
 
-"Product Not As Expected" is identified as the top return reason.
+4. "Product Not As Expected" is the leading return reason
 
-This could indicate a gap between what customers expect before purchase and what they receive.
+This finding points toward a possible gap between the customer's expectation at purchase and the actual product received.
 
-Possible areas to investigate include:
+Product imagery, descriptions, specifications, reviews and expectation-setting should therefore be reviewed.
 
-Product images
+5. Return causes are not equally important
+
+The Pareto analysis demonstrates why looking at every return reason equally isn't necessarily efficient.
+
+The business can focus first on the reasons contributing the largest share of returned units.
+
+6. Discounting needs to be monitored
+
+Some products show a combination of relatively high discounts and higher return rates.
+
+This doesn't establish causation, but it creates a useful risk signal for further product and promotion analysis.
+
+💡 Business Recommendations
+
+The dashboard can translate directly into operational actions.
+
+🛍️ Product Not As Expected
+
+Improve:
+
+Product photography
 Product descriptions
-Size information
 Product specifications
+Product comparison information
 Customer reviews
-Product quality
-Customer expectations created by marketing
-5. Some return reasons dominate overall returns
 
-The Pareto analysis shows that a relatively small number of return reasons contribute a large proportion of returned units.
+The goal is to make the online product experience closer to the actual product.
 
-This is useful because the company doesn't necessarily need to solve every return reason at once. It can prioritize the biggest contributors first.
+👕 Wrong Size
 
-6. Discounts and returns deserve attention
+For Fashion and Footwear:
 
-The scatter plot comparing Average Discount % vs Return Rate % shows variation across products.
+Improve size guides
+Add measurement references
+Show fit information
+Analyze size-related return feedback
+📦 Damaged Product
 
-Some products have relatively high discounts alongside higher return rates. This doesn't prove that discounts cause returns, but it highlights products that deserve further investigation.
+Review:
 
-7. Product-level performance varies considerably
+Packaging standards
+Warehouse handling
+Delivery partners
+Marketplace fulfillment processes
+⭐ Quality Issues
 
-The product diagnostics table shows noticeable differences in:
+Create vendor-level scorecards using:
 
-Return rate
 Returned units
+Return rate
 Refund amount
-Average return days
-Average discount
+Quality-related return reasons
 
-This suggests that return management should not be approached only at an overall business level. Specific products may require targeted action.
+This can help identify suppliers contributing disproportionately to returns.
 
-💡 Business Takeaways
+💰 Discount Risk
 
-The analysis suggests several practical actions:
+Avoid aggressive discounts on products that already show a high return rate unless there is a clear business reason.
 
-Reduce "Product Not As Expected" returns
+Promotions should be evaluated against both sales volume and post-sale return behavior.
 
-Improve product information with better photography, detailed specifications, accurate descriptions, size guides, and customer reviews.
+🎯 Prioritization Rule
 
-Focus on Fashion first
+A useful business rule from this analysis is:
 
-Since Fashion has the highest return volume, it should be one of the first categories investigated.
+Prioritize return causes that combine high returned-unit volume with high refund exposure.
 
-Prioritize the biggest return reasons
-
-Use the Pareto analysis to focus resources on the return reasons responsible for the largest share of returns.
-
-Investigate high-discount products
-
-Products with both high discounts and high return rates should be reviewed to understand whether promotions are attracting customers whose expectations don't match the product.
-
-Monitor problematic products
-
-Products with unusually high return rates should be reviewed individually rather than relying only on category-level averages.
-
-Improve return-cycle management
-
-Average return days can help operations teams understand how quickly returned inventory is coming back into the business.
+This prevents the business from focusing only on the number of returns while ignoring their financial impact.
 
 🛠️ Tools & Technologies
+
 Power BI
 DAX
 Power Query
 Data Modeling
-Data Cleaning & Transformation
-Interactive Visualizations
-Power BI Techniques Used
+Data Cleaning
+Data Visualization
+Star Schema
+
+Power BI Features Used
 KPI Cards
 Slicers
-Date filtering
+Conditional Formatting
+Matrix Heatmap
+Scatter Plot
+Pareto Chart
 Donut Chart
 Bar Chart
-Pareto Analysis
-Heatmap / Matrix
-Scatter Plot
-Detailed Product Table
-Conditional Formatting
-Time-Series Analysis
-DAX Measures
-*Dataset Taken from Kaggle.com 
-📁 Dashboard Structure
-E-Commerce Return & Refund Analysis
-│
-├── Executive Summary
-│   ├── Total Orders
-│   ├── Return Orders
-│   ├── Return Rate
-│   ├── Refund Amount
-│   ├── Refund Trend
-│   ├── Returns by Sales Channel
-│   ├── Returns by Category
-│   └── Return Reason Pareto
-│
-└── Product Diagnostics
-    ├── Top Return Category
-    ├── Top Return Reason
-    ├── Average Return Days
-    ├── Discount vs Return Rate
-    ├── Return Reason Heatmap
-    └── Product-Level Analysis
-📌 Conclusion
+Line/Area Trend
+Dynamic DAX Measures
+MoM Analysis
+Interactive Filtering
+📚 What I Learned From This Project
 
-This project goes beyond simply reporting return numbers. The objective was to turn transaction-level return data into business insights that can support better decisions around products, customers, promotions, and return management.
+One of the main goals of this project was to build something that demonstrates more than Power BI visualization skills.
+
+The project helped bring together:
+
+Data Cleaning → Data Modeling → DAX → Business Logic → Visualization → Business Recommendations
+
+The biggest learning for me was that a good dashboard shouldn't answer only:
+
+"What happened?"
+
+It should also help answer:
+
+"Why did it happen, and what should the business do next?"
+
+📁 Suggested GitHub Repository Structure
+E-Commerce-Return-Refund-Analysis/
+│
+├── README.md
+│
+├── Dataset/
+│   └── ecommerce_orders.csv
+│
+├── PowerBI/
+│   └── E-Commerce_Return_Refund_Analysis.pbix
+│
+├── Dashboard/
+│   ├── Executive_Summary.png
+│   └── Product_Diagnostics.png
+│
+├── DAX/
+│   └── Measures.md
+│
+└── Documentation/
+    └── Business_Insights.md
 Screenshot Image :
 
 The biggest opportunity is to understand why customers return products and then focus improvement efforts on the categories, products, and return reasons creating the greatest financial and operational impact.<img width="1907" height="1768" alt="E-Commerce Return   Refund Analysis Screenshot" src="https://github.com/user-attachments/assets/8a1a3fbb-be68-466e-a2b8-2b1a67f1f5bb" />
