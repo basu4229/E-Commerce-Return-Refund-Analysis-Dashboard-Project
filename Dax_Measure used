@@ -1,0 +1,165 @@
+1st page measure 
+charts
+1. Cumalative Return  units = 
+VAR Currentrank = 
+[Return Reason Rank]
+
+RETURN
+
+SUMX(
+    FILTER(
+        ALLSELECTED(Dim_ReturnReason[Return_Reason]),
+        [Return Reason Rank] <= Currentrank 
+    ),
+    [Returned Units]
+)
+
+2.Cumaltive Returns % = 
+DIVIDE(
+    [Cumalative Return  units],
+    CALCULATE([Returned Units],
+    ALLSELECTED(Dim_ReturnReason[Return_Reason])
+    ),
+    0
+)
+3.Refund Amount = 
+CALCULATE(
+    SUMX(
+        Fact_Orders,
+        Fact_Orders[Return_Quantity]
+        *Fact_Orders[Unit_Price]
+        *(1-Fact_Orders[Discount_Pct])
+        *(1-Fact_Orders[Refund_Deduction_Pct])
+    ),
+    Fact_Orders[Return_Flag] = "Yes"
+)
+4. Return Reason Rank = 
+RANKX(
+    ALLSELECTED(Dim_ReturnReason[Return_Reason]),
+    [Returned Units],
+    ,DESC,Dense
+)
+5.Returned Units = 
+SUM(Fact_Orders[Return_Quantity])
+
+Kpis 
+
+1.Total Orders MOM VAR = 
+VAR MOM = [Total Orders MOM%]
+
+RETURN
+SWITCH(
+    TRUE(),
+    MOM > 0,
+    UNICHAR(9650)& " " & FORMAT(MOM, "0.00%"),
+    MOM <0,
+    UNICHAR(9660)& " " & FORMAT(MOM, "0.00%"),
+    "-0.00%"
+)
+2. Total Orders MOM% = 
+
+VAR Prev_Month =
+CALCULATE(
+    [Total Orders],
+    DATEADD(
+        Date_Table[Date],
+        -1,
+        MONTH
+    )
+)
+RETURN
+
+DIVIDE(
+    [Total Orders] - Prev_Month,
+    Prev_Month,
+    0
+)
+
+2. page measure 
+charts
+1. Average_Discount % = 
+DIVIDE(
+    SUMX(
+        Fact_Orders,
+        Fact_Orders[Discount_Pct] * Fact_Orders[Quantity]
+    ),
+    SUM(Fact_Orders[Quantity]),
+    0
+)
+Kpis 
+
+1.Product Return Colour = 
+VAR ProductReturnRate = 
+[Return Rate %]
+
+VAR OverallReturnRate = 
+CALCULATE(
+    [Return Rate %],
+    REMOVEFILTERS(Dim_Products[Product_Name])
+)
+
+RETURN
+
+SWITCH(
+    TRUE(),
+    ISBLANK(ProductReturnRate),"#E8E3E3",
+    ProductReturnRate > OverallReturnRate * 1.20,"#A52A3A",
+    ProductReturnRate > OverallReturnRate, "#D96773",
+    "#F3C5C9"
+)
+2. Top Return Category = 
+
+VAR TopCategoryTable =
+TOPN(
+    1,
+    VALUES(Dim_Products[Category]),
+    [Returned Units],
+    DESC
+)
+RETURN
+CONCATENATEX(
+    TopCategoryTable,
+    Dim_Products[Category],
+    ","
+)
+3. Top Return Reason = 
+
+VAR TopReturnReason =
+TOPN(
+    1,
+    VALUES(Dim_ReturnReason[Return_Reason]),
+    [Returned Units],
+    DESC,
+    Dim_ReturnReason[Return_Reason],
+    ASC
+)
+
+RETURN
+CONCATENATEX(
+    TopReturnReason,
+    Dim_ReturnReason[Return_Reason],
+    ","
+)
+
+Date_Table = 
+VAR MinDate =
+    MIN ( Fact_Orders[Order_Date] )
+VAR MaxDate =
+    MAX ( Fact_Orders[Order_Date] )
+RETURN
+ADDCOLUMNS (
+    CALENDAR ( MinDate, MaxDate ),
+    "Year", YEAR ( [Date] ),
+    "Quarter", "Q" & QUARTER ( [Date] ),
+    "Month Number", MONTH ( [Date] ),
+    "Month Name", FORMAT ( [Date], "MMM" ),
+    "Month Short", FORMAT ( [Date], "MMM" ),
+    "Year-Month", FORMAT ( [Date], "YYYY-MM" ),
+    "Month Year", FORMAT ( [Date], "MMM YYYY" ),
+    "Week Number", WEEKNUM ( [Date], 2 ),
+    "Day", DAY ( [Date] ),
+    "Day Name", FORMAT ( [Date], "dddd" ),
+    "Day Short", FORMAT ( [Date], "ddd" ),
+    "Day of Week", WEEKDAY ( [Date], 2 ),
+    "Is Weekend", IF ( WEEKDAY ( [Date], 2 ) >= 6, "Yes", "No" )
+)
